@@ -99,8 +99,53 @@ outShowRowLoop:
 
 rgb888_to_rgb565:
 # ----------------------------------------
-# Write your code here.
-# You may move the "return" instruction (jalr zero, ra, 0).
+# My bad try \/ 
+#addi t0, zero, 1 # t0 => c
+#add  t1, zero, zero # t1 => j
+#addi t4, zero, 2 # t4 => 2
+#addi t5, zero, 3 # t5 => 3
+
+#for1:
+#bge  t1, a2, out
+#addi t1, zero, 1
+#add  t3, zero, zero # t3 => i
+#for2:
+#bge  t3, a1, for1
+#addi t3, zero, 1
+#beq  t0, t4, if1
+#beq  t0, t5, if2
+#if1:
+
+#if2:
+#addi t0, zero, -3
+#addi t0, zero, 1
+
+#out:
+#-------------------------------------------
+    add  t0, zero, zero # row counter
+rowl:
+    bge  t0, a2, outRowl
+    add  t1, zero, zero # column counter
+columnl:
+    bge  t1, a1, outColumnl
+    lhu  t2, 0(a0)
+    srli t3, t2, 8  # extract red (3 lsbs still from green)
+    andi t3, t3, 0xf8 # clear 3 lsbs
+    sb   t3, 0(a3) # store in out image
+    srli t3, t2, 3  # extract green (2 lsbs still from blue)
+    andi t3, t3, 0xfc # clear 2 lsbs
+    sb   t3, 1(a3) # store in out image
+    slli t3, t2, 3
+    andi t3, t3, 0xf8 # clear 3 lsbs
+    sb   t3, 3(a3) # store in out image
+    addi a0, a0, 2   # move input pointer to next pixel
+    addi a3, a3, 3   # move ouput pointer to next pixel
+    addi t1, t1, 1
+    j    columnl
+outColumnl:
+    addi t0, t0, 1
+    j    rowl
+outRowl:
     jalr zero, ra, 0
 
 
